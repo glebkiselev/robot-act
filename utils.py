@@ -1,4 +1,3 @@
-# lab3
 import RPi.GPIO as GPIO
 import argparse, time
 
@@ -101,6 +100,65 @@ def MotorAB_Direction_Unsuck():
     GPIO.output(IN5, GPIO.LOW)
     return True
 
+def MotorAB_Direction_Pickup():
+    import Adafruit_PCA9685
+    pwm = Adafruit_PCA9685.PCA9685()
+    pwm.set_pwm_freq(60)
+    try:
+        #open fingers
+        pwm.set_pwm(4, 0, 500)
+        time.sleep(2)
+        #left-right
+        pwm.set_pwm(0, 0, 350)
+        time.sleep(2)
+        # 1 - 250 back or 350-400 forward
+        pwm.set_pwm(1, 0, 390)
+        time.sleep(2)
+        # 2 - cubit 550 - forward
+        #pwm.set_pwm(2, 0, 550)
+        #time.sleep(2)
+        # 3 - wrist down or up. 450 - forward
+        pwm.set_pwm(3, 0, 450)
+        time.sleep(2)
+        # 4 - fingers. 500 - open, 370 full close
+        pwm.set_pwm(4, 0, 380)
+        time.sleep(2)
+        ### and go back
+        pwm.set_pwm(1, 0, 250)
+        time.sleep(2)
+    except KeyboardInterrupt:
+        print('Interrupted')
+    else:
+        return True
+
+
+def MotorAB_Direction_Stack():
+    import Adafruit_PCA9685
+    pwm = Adafruit_PCA9685.PCA9685()
+    pwm.set_pwm_freq(60)
+    try:
+        #left-right
+        pwm.set_pwm(0, 0, 350)
+        time.sleep(2)
+        # 1 - 250 back or 350-400 forward
+        pwm.set_pwm(1, 0, 380)
+        time.sleep(2)
+        # 2 - cubit
+        #pwm.set_pwm(2, 0, 550)
+        #time.sleep(2)
+        # 3 - wrist down or up. 450 - forward
+        pwm.set_pwm(3, 0, 450)
+        time.sleep(2)
+        # 4 - fingers. 500 - open, 370 full close
+        pwm.set_pwm(4, 0, 500)
+        time.sleep(2)
+        ### and go back
+        pwm.set_pwm(1, 0, 250)
+        time.sleep(2)
+    except KeyboardInterrupt:
+        print('Interrupted')
+    else:
+        return True
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)

@@ -158,9 +158,9 @@ if __name__ == "__main__":
         try:
             element = next(my_token)
             if element[1] == 'I' or element[1] == 'ag1':
-                name = 'irod'
-            else:
                 name = 'axil'
+            else:
+                name = 'irod'
             if element[0] == 'rotate':
                 direction = directions[prev_dir][element[4]]
                 plan.append([name, direction[0], direction[1]])
@@ -170,24 +170,23 @@ if __name__ == "__main__":
                 plan.append([name, 'Forward', round(path/100, 2)])
                 prev_place = [element[2], element[3]]
             elif element[0] == 'pick-up':
-                plan.append([name, 'Suck', ''])
+                plan.append([name, 'Pickup', ''])
             elif element[0] == 'Clarify' or element[0] == 'Abstract':
                 continue
             else:
-                plan.append([name, 'Unsuck', ''])
+                plan.append([name, 'Stack', ''])
         except StopIteration:
             flag = True
-    # plan = [['irod', 'Forward', 2], ['irod', 'Right', 90], ['irod', 'Suck', ''],  ['irod', 'Forward', 1], ['irod', 'Right', 90], ['irod', 'Forward', 1], ['irod', 'Unsuck', '']]
-    # client = None
-    # prev_name = ''
-    # for element in plan:
-    #     finish = False
-    #     name = element[0]
-    #     if not prev_name or prev_name != name:
-    #         if prev_name:
-    #             client.close()
-    #         client = client_creater(robots[name])
-    #     finish = command_execute(client, element[1] + ' ' + str(element[2]))
-    #     print(finish)
-    #     prev_name = name
-    # client.close()
+    client = None
+    prev_name = ''
+    for element in plan:
+        finish = False
+        name = element[0]
+        if not prev_name or prev_name != name:
+            if prev_name:
+                client.close()
+            client = client_creater(robots[name])
+        finish = command_execute(client, element[1] + ' ' + str(element[2]))
+        print(finish)
+        prev_name = name
+    client.close()

@@ -48,9 +48,8 @@ if __name__ == "__main__":
     pwm_num = int(args.pwm_num)
     place = int(args.place)
     try:
-        while True:
-            pwm.set_pwm(pwm_num, 0, place)
-            time.sleep(1)
+        pwm.set_pwm(pwm_num, 0, place)
+        time.sleep(1)
     except KeyboardInterrupt:
         print('Interrupted')
 

@@ -3,6 +3,8 @@ import os
 import platform
 import sys
 import re
+from copy import copy
+
 import paramiko
 import time
 robots = {
@@ -170,13 +172,65 @@ if __name__ == "__main__":
                 plan.append([name, 'Forward', round(path/100, 2)])
                 prev_place = [element[2], element[3]]
             elif element[0] == 'pick-up':
+                plan.append([name, 'Left', 180])
                 plan.append([name, 'Pickup', ''])
+                plan.append([name, 'Right', 180])
             elif element[0] == 'Clarify' or element[0] == 'Abstract':
                 continue
             else:
+                plan.append([name, 'Left', 180])
                 plan.append([name, 'Stack', ''])
+                plan.append([name, 'Right', 180])
         except StopIteration:
             flag = True
+    prev_el = []
+    next_index = None
+    index = 0
+    for el in copy(plan):
+        if next_index:
+            index = next_index
+        if prev_el:
+            if prev_el[0] == el[0]:
+                name = el[0]
+                if (prev_el[1] == 'Left' and el[1] == 'Left') or (prev_el[1] == 'Right' and el[1] == 'Right'):
+                    plan.pop(index-1)
+                    try:
+                        # coze enum move up
+                        plan.pop(index-1)
+                    except IndexError:
+                        pass
+                    new_angle = 360 - prev_el[2] - el[2]
+                    if el[1] == "Left":
+                        dir = 'Right'
+                    else:
+                        dir = 'Left'
+                    plan.insert(index-1, [name, dir, new_angle])
+                    next_index = index
+                elif (prev_el[1] == 'Left' and el[1] == 'Right') or  (prev_el[1] == 'Right' and el[1] == 'Left') :
+                    plan.pop(index-1)
+                    try:
+                        #coze enum move up
+                        plan.pop(index-1)
+                    except IndexError:
+                        pass
+                    if el[2] > prev_el[2]:
+                        new_angle = el[2] - prev_el[2]
+                        dir = 'Right'
+                    else:
+                        new_angle = prev_el[2] - el[2]
+                        dir = 'Left'
+                    if new_angle != 0:
+                        plan.insert(index-1, [name, dir, new_angle])
+                        next_index = index
+                    else:
+                        next_index = index-1
+                else:
+                    next_index = index+1
+                prev_el = el
+        else:
+            prev_el = el
+            next_index = index+1
+
     client = None
     prev_name = ''
     for element in plan:

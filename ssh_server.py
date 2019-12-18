@@ -12,6 +12,18 @@ robots = {
 'axil' : ['192.168.1.50', 'pi', 'raspberry', 22]
 }
 
+aruko = {
+    'above':3.0,
+    'above-right': -2.2,
+    'above-left': 2.2,
+    'left': 1.59,
+    'right': -1.59,
+    'below': 0.0,
+    'below-left': 0.96,
+    'below-right': -0.96,
+}
+
+
 directions = {
     'above':{
         'above-right': ['Right', 45],
@@ -165,22 +177,24 @@ if __name__ == "__main__":
                 name = 'irod'
             if element[0] == 'rotate':
                 direction = directions[prev_dir][element[4]]
-                plan.append([name, direction[0], direction[1]])
+                plan.append([name, direction[0], direction[1], aruko[element[4]]])
                 prev_dir = element[4]
             elif element[0] == 'move':
                 path = math.sqrt((element[3]-prev_place[1])**2 + (element[2]-prev_place[0])**2)
-                plan.append([name, 'Forward', round(path/100, 2)])
+                plan.append([name, 'Forward', round(path/100, 2), aruko[prev_dir]])
                 prev_place = [element[2], element[3]]
             elif element[0] == 'pick-up':
-                plan.append([name, 'Left', 180])
-                plan.append([name, 'Pickup', ''])
-                plan.append([name, 'Right', 180])
+                new_dir = [dir for dir, key in directions[prev_dir].items() if key[1] == 180][0]
+                plan.append([name, 'Left', 180, aruko[new_dir]])
+                plan.append([name, 'Pickup', '', aruko[new_dir]])
+                plan.append([name, 'Right', 180, aruko[prev_dir]])
             elif element[0] == 'Clarify' or element[0] == 'Abstract':
                 continue
             else:
-                plan.append([name, 'Left', 180])
-                plan.append([name, 'Stack', ''])
-                plan.append([name, 'Right', 180])
+                new_dir = [dir for dir, key in directions[prev_dir].items() if key[1] == 180][0]
+                plan.append([name, 'Left', 180, aruko[new_dir]])
+                plan.append([name, 'Stack', '', aruko[new_dir]])
+                plan.append([name, 'Right', 180, aruko[prev_dir]])
         except StopIteration:
             flag = True
     prev_el = []

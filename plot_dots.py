@@ -23,5 +23,17 @@ if __name__ == "__main__":
         data1.append(float(res['x']))
         data2.append(float(res['y']))
     client.terminate()
-    plt.plot(data1, data2, 'o', color='blue')
+    elem1 = 0
+    elem2 = 0
+    for elem in data1:
+        elem1+=elem
+    elem1 = elem1 / 50
+    for elem in data2:
+        elem2+=elem
+    elem2 = elem2 / 50
+
+    fig, axs = plt.subplots(2)
+    fig.suptitle('wdfsgrfs')
+    axs[0].plot(elem1, elem2, 'o', color = 'red')
+    axs[1].plot(data1, data2, 'o', color = 'blue')
     plt.show()
